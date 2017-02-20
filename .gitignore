@@ -1,0 +1,12 @@
+/db/
+node_modules/
+dist/
+
+##############
+# Logfiles
+#############
+*.log
+
+
+
+.DS_Store

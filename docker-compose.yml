@@ -1,0 +1,16 @@
+node:
+    build: .
+    dockerfile: node.dockerfile
+    ports:
+        - 8080:3000
+    volumes:
+        - ./web:/web
+    links:
+        - db:mongo_db
+db:
+    build: .
+    dockerfile: db.dockerfile
+    volumes:
+        - ./db:/data/db
+    ports:
+        - 27017:27017
