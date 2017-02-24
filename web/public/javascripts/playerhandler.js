@@ -3,6 +3,7 @@
 /* global playerHandler:true */
 /* global player:true */
 /* global obstacles */
+/* global enemies */
 
 let player;
 let bullets;
@@ -94,6 +95,12 @@ class PlayerHandler {
       player.animations.play('jump', true);
     }
 
+    game.physics.arcade.overlap(bullets, enemies, (bullet, enemy) => {
+      enemy.damage(10);
+      game.add.tween(enemy)
+        .to({ tint: 0xfefefe }, 200, Phaser.Easing.Linear.None, true);
+      bullet.kill();
+    });
     bullets.forEachAlive((thisBullet) => {
       if (thisBullet.body.x < game.camera.x
         || thisBullet.body.x > game.camera.x + game.camera.width) {

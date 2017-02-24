@@ -55,25 +55,26 @@ class PointsHandler {
     // console.log(this.pointClusters.length);
   }
 
-  spawn(pos, content) {
+  spawn(x, y, content) {
     const cluster = game.add.group();
     for (let i = 0; i < content.length; i += 1) {
       if (content[i] !== ' ') {
-        const red = (game.rnd.integerInRange(0, 255)).toString(16);
-        const green = (game.rnd.integerInRange(0, 255)).toString(16);
-        const blue = (game.rnd.integerInRange(0, 255)).toString(16);
+        // const red = (game.rnd.integerInRange(0, 255)).toString(16);
+        // const green = (game.rnd.integerInRange(0, 255)).toString(16);
+        // const blue = (game.rnd.integerInRange(0, 255)).toString(16);
         // const color = `#${red}${green}${blue}`;
-        const color = `#${red}${green}${blue}`;
+        // const color = `#${red}${green}${blue}`;
+        const color = '#FFF';
 
         const size = game.rnd.integerInRange(13, 18);
-        const letter = game.add.text(pos.x, pos.y, content[i], {
+        const letter = game.add.text(x, y, content[i], {
           font: `${size}px Courier New`,
           fill: color,
         });
         game.physics.arcade.enable(letter);
 
         const angle = game.rnd.angle();
-        const speed = game.rnd.realInRange(100, 2000);
+        const speed = game.rnd.realInRange(100, 1300);
 
         letter.body.velocity.x += Math.sin(angle) * speed;
         letter.body.velocity.y += Math.cos(angle) * speed;
@@ -82,7 +83,7 @@ class PointsHandler {
 
       setTimeout(() => {
         cluster.pullTowardsHero = true;
-      }, 500);
+      }, 300);
 
       points.add(cluster);
     }

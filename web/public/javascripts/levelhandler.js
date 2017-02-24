@@ -15,7 +15,7 @@ class LevelHandler {
 
     // sky.anchor.setTo(0.5, 0.5);
     //
-    game.world.setBounds(0, 0, 2 * 1920, 1920);
+    game.world.setBounds(0, 0, 2 * 1920, 1000);
     // const sky = game.add.sprite(game.world.centerX, game.world.centerY, 'sky');
     game.stage.backgroundColor = '#697e96';
 

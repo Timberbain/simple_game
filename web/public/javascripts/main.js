@@ -36,8 +36,12 @@ function create() {
   obstacleHandler.create();
   pointsHandler.create();
 
+  enemyHandler.spawn(500, 600);
+  enemyHandler.spawn(600, 600);
+  enemyHandler.spawn(700, 600);
+  enemyHandler.spawn(800, 600);
   // initateCoins();
-  createTexts();
+  // createTexts();
 }
 
 function createTexts() {
@@ -49,17 +53,7 @@ function createTexts() {
   fj fj ghk fuk tyfjhrzjmtcyj ddsne5rdywry sezrsyes tdh esujmtdrerydtrd fd
   rstu zdr sr6utrt7 uezrdfxes`;
 
-  pointsHandler.spawn({ x: 600, y: 100 }, content);
-  pointsHandler.spawn({ x: 400, y: 200 }, content);
-  pointsHandler.spawn({ x: 200, y: 300 }, content);
-  pointsHandler.spawn({ x: 300, y: 400 }, content);
-  pointsHandler.spawn({ x: 500, y: 500 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
-  pointsHandler.spawn({ x: 600, y: 600 }, content);
+  pointsHandler.spawn(600, 100, content);
 }
 
 function update() {
