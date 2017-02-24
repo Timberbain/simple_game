@@ -3,6 +3,7 @@
 /* global ObstacleHandler */
 /* global PointsHandler */
 /* global LevelHandler */
+/* global EnemyHandler */
 
 /* global player */
 /* global obstacles */
@@ -13,11 +14,13 @@ let playerHandler;
 let obstacleHandler;
 let pointsHandler;
 let levelHandler;
+let enemyHandler;
 // let coins;
 
 function preload() {
   levelHandler = new LevelHandler();
   playerHandler = new PlayerHandler();
+  enemyHandler = new EnemyHandler();
   obstacleHandler = new ObstacleHandler();
   pointsHandler = new PointsHandler();
 
@@ -29,6 +32,7 @@ function create() {
 
   levelHandler.create();
   playerHandler.create();
+  enemyHandler.create();
   obstacleHandler.create();
   pointsHandler.create();
 
@@ -63,6 +67,7 @@ function update() {
   // game.physics.arcade.collide(letters, obstacles);
 
   playerHandler.update();
+  enemyHandler.update();
   pointsHandler.update();
   levelHandler.update();
 }

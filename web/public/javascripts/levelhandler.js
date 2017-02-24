@@ -44,6 +44,7 @@ class LevelHandler {
       background.mid.tilePosition.x = player.x / 1.4;
       background.front.tilePosition.x = player.x / 1.9;
     }
+
     // background.back.tilePosition.x -= 0.05;
     // background.mid.tilePosition.x -= 0.3;
     // background.front.tilePosition.x -= 0.75;
