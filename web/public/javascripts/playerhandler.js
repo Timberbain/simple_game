@@ -5,71 +5,65 @@
 /* global obstacles */
 /* global enemies */
 
-let player;
-let bullets;
-let bulletTime;
 class PlayerHandler {
-  constructor() {
-    game.load.spritesheet('megaman', 'assets/spritesheetmegaman1.png', 64, 64, -1, 1);
-    bulletTime = game.time.now;
-    game.load.atlas('bullet',
-      'assets/bullet_atlas.png',
-      'assets/bullet_atlas.json',
-      Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+  constructor(state) {
+    this.state = state;
+    this.bulletTime = this.state.game.time.now;
   }
 
-  create() {
-    player = game.add.sprite(500, 100, 'megaman');
+  spawn(x, y) {
+    this.state.player = this.state.game.add.sprite(x, y, 'megaman');
+    this.state.player.sound = {};
+    this.state.player.sound.blaster = this.state.game.add.audio('blaster');
+    this.state.player.sound.hit = [
+      this.state.game.add.audio('hit1'),
+      this.state.game.add.audio('hit2'),
+      this.state.game.add.audio('hit3'),
+    ];
 
-    game.physics.arcade.enable(player);
+    this.state.game.physics.arcade.enable(this.state.player);
 
-    player.body.setSize(44, 64, 10, 0);
-    player.scale.setTo(1, 1);
+    this.state.player.body.setSize(44, 64, 10, 0);
+    this.state.player.scale.setTo(1, 1);
 
-    player.body.bounce.y = 0;
-    player.body.gravity.y = 600;
-    player.body.collideWorldBounds = true;
+    this.state.player.body.bounce.y = 0;
+    this.state.player.body.gravity.y = 600;
+    this.state.player.body.collideWorldBounds = true;
 
-    player.animations.add('idle', [0, 0, 0, 0, 0, 0, 0, 1], 1);
-    player.animations.add('shoot', [7], 1);
-    player.animations.add('walk', [3, 4, 5, 4], 5);
-    player.animations.add('walk_shoot', [9, 10, 11, 10], 5);
-    player.animations.add('jump', [11], 1);
-    player.animations.add('jump_shoot', [12], 5);
-    player.animations.play('idle', 5, true);
+    this.state.player.animations.add('idle', [0, 0, 0, 0, 0, 0, 0, 1], 1);
+    this.state.player.animations.add('shoot', [7], 1);
+    this.state.player.animations.add('walk', [3, 4, 5, 4], 5);
+    this.state.player.animations.add('walk_shoot', [9, 10, 11, 10], 5);
+    this.state.player.animations.add('jump', [11], 1);
+    this.state.player.animations.add('jump_shoot', [12], 5);
+    this.state.player.animations.play('idle', 5, true);
 
-    // player.animations.add('idle', ['hero1', 'hero1', 'hero1', 'hero1', 'hero2'], 1);
-    // // player.animations.add('shoot', ['hero9'], 1);
-    // player.animations.add('walk', ['hero4', 'hero5', 'hero6', 'hero5'], 5);
-    // // player.animations.add('walk_shoot', ['hero10', 'hero11', 'hero12', 'hero11'], 5);
-    // player.animations.add('jump', ['hero13'], 1);
-    // // player.animations.add('jump_shoot', ['hero14'], 5);
-    // // player.animations.play('idle', 5, true);
-    // // player.animations.add('walk', Phaser.Animation.generateFrameNames('walk', 1, 10, '', 0), 5);
-    // player.animations.play('walk', 5, true);
+    this.state.game.camera.follow(this.state.player);
 
-    game.camera.follow(player);
-
-    this.cursor = game.input.keyboard.createCursorKeys();
-    this.fireKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+    this.cursor = this.state.game.input.keyboard.createCursorKeys();
+    this.fireKey = this.state.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    this.state.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
 
-    bullets = game.add.group();
-    bullets.enableBody = true;
-    bullets.physicsBodyType = Phaser.Physics.ARCADE;
-    bullets.createMultiple(10, 'bullet');
-    bullets.forEach((thisBullet) => {
+    this.state.bullets = this.state.game.add.group();
+    this.state.bullets.enableBody = true;
+    this.state.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+    this.state.bullets.createMultiple(10, 'bullet');
+    this.state.bullets.forEach((thisBullet) => {
       thisBullet.animations.add('fired', Phaser.Animation.generateFrameNames('fbullet', 4, 7), 1);
       thisBullet.width = 25;
       thisBullet.height = 25;
     });
-    bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', (thisBullet) => { thisBullet.kill(); }, this);
-    bullets.setAll('checkWorldBounds', true);
+    this.state.bullets.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', (thisBullet) => { thisBullet.kill(); }, this);
+    this.state.bullets.setAll('checkWorldBounds', true);
   }
 
   update() {
-    const hitPlatform = game.physics.arcade.collide(player, obstacles);
+    const game = this.state.game;
+    const player = this.state.player;
+    const tiles = this.state.tiles;
+
+    const hitPlatform = game.physics.arcade.collide(player, tiles);
 
     player.body.velocity.x = 0;
     if (this.cursor.left.isDown) {
@@ -87,7 +81,6 @@ class PlayerHandler {
     }
     if (this.fireKey.isDown) {
       this.fireBullet();
-      player.animations.play('shoot');
     }
 
     if (this.cursor.up.isDown && player.body.touching.down && hitPlatform) {
@@ -95,28 +88,41 @@ class PlayerHandler {
       player.animations.play('jump', true);
     }
 
+    const bullets = this.state.bullets;
+    const enemies = this.state.enemies;
     game.physics.arcade.overlap(bullets, enemies, (bullet, enemy) => {
       enemy.damage(10);
+      player.sound.hit[game.rnd.integerInRange(0, 2)].play();
       game.add.tween(enemy)
-        .to({ tint: 0xfefefe }, 200, Phaser.Easing.Linear.None, true);
+        .to({ tint: 0xaeaeae }, 200, Phaser.Easing.Linear.None, true)
+        .onComplete.add(() => {
+          enemy.tint = 0xffffff;
+        }, this);
       bullet.kill();
     });
+
+    const camera = this.state.game.camera;
     bullets.forEachAlive((thisBullet) => {
-      if (thisBullet.body.x < game.camera.x
-        || thisBullet.body.x > game.camera.x + game.camera.width) {
+      if (thisBullet.body.x < camera.x
+        || thisBullet.body.x > camera.x + camera.width) {
         thisBullet.kill();
       }
     });
   }
 
   fireBullet() {
-    if (game.time.now > bulletTime) {
+    const game = this.state.game;
+    const bullets = this.state.bullets;
+    const player = this.state.player;
+    if (game.time.now > this.bulletTime) {
       const bullet = bullets.getFirstExists(false);
       if (bullet) {
+        player.animations.play('shoot');
+        player.sound.blaster.play();
         bullet.play('fired', 25, false);
         bullet.reset(player.x + 64, player.y + 33);
         bullet.body.velocity.x = 500;
-        bulletTime = game.time.now + 250;
+        this.bulletTime = game.time.now + 250;
       }
     }
   }
